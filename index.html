@@ -487,9 +487,9 @@
       opacity: 0;
       transform: scale(0.62) translateY(24px) rotate(var(--tilt, 0deg));
       transition:
-        opacity 520ms ease,
+        opacity 200ms ease,
         transform 680ms cubic-bezier(0.16, 0.98, 0.22, 1),
-        filter 520ms ease;
+        filter 200ms ease;
       will-change: transform, opacity, filter;
       pointer-events: none;
     }
@@ -618,7 +618,7 @@
     .page {
       opacity: 0;
       transform: scale(0.98);
-      transition: opacity 520ms ease, transform 520ms ease;
+      transition: opacity 200ms ease, transform 200ms ease;
     }
 
     .page.ready {
@@ -778,12 +778,12 @@
   <script>
     const prizes = [{
         name: "大颗板栗1",
-        src: "./大颗板栗1.png",
+        src: "./大颗板栗1.webp",
         alt: "奖品图片：大颗板栗1"
       },
       {
         name: "哈基米萝莉踩踩背",
-        src: "./哈基米萝莉踩踩背.png",
+        src: "./哈基米萝莉踩踩背.webp",
         alt: "奖品图片：哈基米萝莉踩踩背"
       }
     ];
@@ -829,7 +829,7 @@
         introIndex += 1;
         syncIntroCards();
         isIntroMoving = false;
-      }, 520);
+      }, 200);
     }
 
     function pickPrizeIndex() {
