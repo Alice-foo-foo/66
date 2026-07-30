@@ -73,6 +73,9 @@
 
     button {
       font: inherit;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      user-select: none;
     }
 
     .page {
@@ -387,8 +390,7 @@
     }
 
     .draw:focus-visible,
-    .intro-skip:focus-visible,
-    .intro-hit:focus-visible {
+    .intro-skip:focus-visible {
       outline: 3px solid var(--red);
       outline-offset: 4px;
     }
@@ -483,8 +485,12 @@
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.74), 0 0 0 1px rgba(165, 28, 36, 0.32) inset;
       clip-path: var(--cut);
       opacity: 0;
-      transform: scale(0.48) translateY(28px) rotate(var(--tilt, 0deg));
-      transition: opacity 460ms ease, transform 560ms cubic-bezier(0.18, 0.92, 0.2, 1), filter 460ms ease;
+      transform: scale(0.62) translateY(24px) rotate(var(--tilt, 0deg));
+      transition:
+        opacity 520ms ease,
+        transform 680ms cubic-bezier(0.16, 0.98, 0.22, 1),
+        filter 520ms ease;
+      will-change: transform, opacity, filter;
       pointer-events: none;
     }
 
@@ -510,17 +516,17 @@
       z-index: 2;
       opacity: 0;
       filter: blur(2px);
-      transform: scale(1.42) translateY(-18px) rotate(var(--exit-tilt, 9deg));
+      transform: scale(1.18) translateY(-10px) rotate(var(--exit-tilt, 7deg));
     }
 
     .intro-card.next {
       z-index: 1;
-      opacity: 0.34;
-      transform: scale(0.78) translateY(30px) rotate(var(--tilt, 0deg));
+      opacity: 0.22;
+      transform: scale(0.86) translateY(22px) rotate(var(--tilt, 0deg));
     }
 
     .intro-card.kick {
-      animation: kickOut 560ms cubic-bezier(0.2, 0.86, 0.2, 1) forwards;
+      animation: kickOut 680ms cubic-bezier(0.16, 0.98, 0.22, 1) forwards;
     }
 
     .intro-card b {
@@ -562,8 +568,23 @@
       inset: 0;
       z-index: 4;
       border: 0;
+      outline: none;
       background: transparent;
       cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      appearance: none;
+    }
+
+    .intro-hit:focus,
+    .intro-hit:focus-visible,
+    .intro-hit:active {
+      outline: none;
+      box-shadow: none;
+      background: transparent;
     }
 
     .intro-tip {
@@ -615,7 +636,7 @@
       to {
         opacity: 0;
         filter: blur(2px);
-        transform: scale(1.45) translateY(-20px) rotate(var(--exit-tilt, 9deg));
+        transform: scale(1.22) translateY(-12px) rotate(var(--exit-tilt, 7deg));
       }
     }
 
@@ -757,12 +778,12 @@
   <script>
     const prizes = [{
         name: "大颗板栗1",
-        src: "大颗板栗1.png",
+        src: "./大颗板栗1.png",
         alt: "奖品图片：大颗板栗1"
       },
       {
         name: "哈基米萝莉踩踩背",
-        src: "哈基米萝莉踩踩背.png",
+        src: "./哈基米萝莉踩踩背.png",
         alt: "奖品图片：哈基米萝莉踩踩背"
       }
     ];
@@ -808,7 +829,7 @@
         introIndex += 1;
         syncIntroCards();
         isIntroMoving = false;
-      }, 360);
+      }, 520);
     }
 
     function pickPrizeIndex() {
@@ -840,7 +861,7 @@
 
     syncIntroCards();
     introHit.addEventListener("click", nextIntroCard);
-    skipIntro.addEventListener("click", enterMain);
+    skipIntro?.addEventListener("click", enterMain);
     drawButton.addEventListener("click", draw);
   </script>
 </body>
