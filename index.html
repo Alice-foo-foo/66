@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090909" />
+  <title>请输入文本</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090909;
+      --panel: rgba(18, 18, 18, 0.84);
+      --panel-2: rgba(34, 34, 34, 0.66);
+      --white: #ffffff;
+      --silver: #a7a7a7;
+      --muted: #676767;
+      --red: #a51c24;
+      --red-deep: #4d070b;
+      --line: rgba(255, 255, 255, 0.16);
+      --font: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      --cut: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100svh;
+      overflow-x: hidden;
+      color: var(--white);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 50% 8%, rgba(165, 28, 36, 0.42), transparent 32rem),
+        linear-gradient(180deg, rgba(68, 7, 11, 0.56), transparent 34%),
+        #090909;
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+    }
+
+    body::before {
+      z-index: 0;
+      opacity: 0.34;
+      background:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 5px),
+        linear-gradient(90deg, transparent 0 48%, rgba(165, 28, 36, 0.16) 48% 49%, transparent 49% 100%);
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      z-index: 0;
+      opacity: 0.2;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.11) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 72%);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100svh;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+    }
+
+    .phone {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      width: min(100%, 460px);
+      min-height: calc(100svh - 32px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.07), transparent 30%),
+        rgba(7, 7, 7, 0.74);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(165, 28, 36, 0.32) inset;
+      clip-path: var(--cut);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 58px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand b,
+    .brand span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand b {
+      font-size: 13px;
+      line-height: 1.1;
+      letter-spacing: 0.08em;
+    }
+
+    .brand span {
+      margin-top: 3px;
+      color: var(--silver);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+    }
+
+    .menu {
+      display: grid;
+      gap: 5px;
+      width: 30px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .menu i {
+      display: block;
+      height: 2px;
+      background: var(--white);
+    }
+
+    .menu i:nth-child(2) {
+      width: 20px;
+      margin-left: auto;
+      background: var(--red);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: 30px 16px 18px;
+    }
+
+    .code {
+      justify-self: end;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+    }
+
+    .title small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--silver);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+    }
+
+    h1 {
+      position: relative;
+      margin: 0;
+      font-size: clamp(40px, 14vw, 70px);
+      line-height: 0.9;
+      letter-spacing: -0.1em;
+    }
+
+    h1::before,
+    h1::after {
+      position: absolute;
+      left: 2px;
+      color: rgba(165, 28, 36, 0.86);
+      content: attr(data-text);
+      clip-path: inset(0 0 62% 0);
+    }
+
+    h1::before {
+      transform: translate(2px, -1px);
+    }
+
+    h1::after {
+      color: rgba(255, 255, 255, 0.24);
+      clip-path: inset(58% 0 0 0);
+      transform: translate(-2px, 1px);
+    }
+
+    .roles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .roles li {
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: var(--panel-2);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    }
+
+    .roles li::before {
+      color: var(--red);
+      content: "+ ";
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      padding: 0 16px 20px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 330px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background:
+        linear-gradient(120deg, rgba(165, 28, 36, 0.24), transparent 38%),
+        rgba(18, 18, 18, 0.82);
+      clip-path: var(--cut);
+    }
+
+    .card::before {
+      position: absolute;
+      inset: 12px;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      content: "";
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      pointer-events: none;
+    }
+
+    .card::after {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background: linear-gradient(90deg, transparent, rgba(165, 28, 36, 0.34), transparent);
+      opacity: 0;
+      transform: translateX(-120%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .drawing .card::after {
+      opacity: 1;
+      animation: scan 0.42s linear infinite;
+    }
+
+    .empty,
+    .result {
+      position: absolute;
+      inset: 0;
+    }
+
+    .empty {
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+    }
+
+    .empty b {
+      display: block;
+      color: var(--white);
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+
+    .empty span {
+      display: block;
+      margin-top: 12px;
+      color: var(--silver);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+    }
+
+    .has-result .empty {
+      display: none;
+    }
+
+    .result {
+      display: none;
+      grid-template-rows: 1fr auto;
+    }
+
+    .has-result .result {
+      display: grid;
+    }
+
+    .result img {
+      width: 100%;
+      height: 100%;
+      min-height: 255px;
+      object-fit: cover;
+      filter: contrast(1.06) saturate(0.94);
+    }
+
+    .caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.72);
+    }
+
+    .caption h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .caption span {
+      flex: 0 0 auto;
+      color: var(--silver);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+    }
+
+    .cta {
+      display: grid;
+      gap: 8px;
+    }
+
+    .draw {
+      position: relative;
+      min-height: 58px;
+      border: 0;
+      color: #050505;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      background: #f2f2f2;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+      touch-action: manipulation;
+    }
+
+    .draw::after {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      color: var(--red);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      content: "DRAW";
+    }
+
+    .draw:active {
+      transform: translateY(1px);
+    }
+
+    .draw:disabled {
+      color: #777;
+      cursor: wait;
+    }
+
+    .draw:focus-visible,
+    .intro-skip:focus-visible,
+    .intro-hit:focus-visible {
+      outline: 3px solid var(--red);
+      outline-offset: 4px;
+    }
+
+    .status {
+      min-height: 20px;
+      margin: 0;
+      color: var(--silver);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .odds {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .odds div {
+      padding: 13px 14px 15px;
+    }
+
+    .odds div+div {
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .odds small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+    }
+
+    .odds b {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .odds em {
+      display: block;
+      margin-top: 5px;
+      color: var(--red);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: max(18px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+      background:
+        radial-gradient(circle at 50% 42%, rgba(165, 28, 36, 0.34), transparent 19rem),
+        rgba(5, 5, 5, 0.94);
+      transition: opacity 480ms ease, visibility 480ms ease;
+    }
+
+    .intro.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .intro-panel {
+      position: relative;
+      width: min(100%, 390px);
+      min-height: min(72svh, 560px);
+      display: grid;
+      place-items: center;
+    }
+
+    .intro-card {
+      position: absolute;
+      inset: auto;
+      display: grid;
+      place-items: center;
+      width: min(78vw, 320px);
+      height: min(52svh, 390px);
+      padding: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--white);
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 28%),
+        linear-gradient(180deg, rgba(38, 38, 38, 0.96), rgba(8, 8, 8, 0.96));
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.74), 0 0 0 1px rgba(165, 28, 36, 0.32) inset;
+      clip-path: var(--cut);
+      opacity: 0;
+      transform: scale(0.48) translateY(28px) rotate(var(--tilt, 0deg));
+      transition: opacity 460ms ease, transform 560ms cubic-bezier(0.18, 0.92, 0.2, 1), filter 460ms ease;
+      pointer-events: none;
+    }
+
+    .intro-card::before {
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      content: "";
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+    }
+
+    .intro-card::after {
+      display: none;
+    }
+
+    .intro-card.current {
+      z-index: 3;
+      opacity: 1;
+      transform: scale(1) translateY(0) rotate(var(--tilt, 0deg));
+    }
+
+    .intro-card.before {
+      z-index: 2;
+      opacity: 0;
+      filter: blur(2px);
+      transform: scale(1.42) translateY(-18px) rotate(var(--exit-tilt, 9deg));
+    }
+
+    .intro-card.next {
+      z-index: 1;
+      opacity: 0.34;
+      transform: scale(0.78) translateY(30px) rotate(var(--tilt, 0deg));
+    }
+
+    .intro-card.kick {
+      animation: kickOut 560ms cubic-bezier(0.2, 0.86, 0.2, 1) forwards;
+    }
+
+    .intro-card b {
+      display: block;
+      position: relative;
+      z-index: 1;
+      font-size: clamp(44px, 15vw, 72px);
+      line-height: 0.96;
+      letter-spacing: -0.1em;
+    }
+
+    .intro-card small {
+      display: block;
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      color: var(--silver);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .intro-card.accent {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 28%),
+        linear-gradient(180deg, rgba(95, 12, 18, 0.96), rgba(8, 8, 8, 0.96));
+    }
+
+    .intro-card.final b {
+      color: transparent;
+      background: linear-gradient(90deg, #fff, #d3d3d3 42%, #a51c24);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .intro-hit {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .intro-tip {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      z-index: 5;
+      margin: 0;
+      color: var(--silver);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      transform: translateX(-50%);
+    }
+
+    .intro-skip {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 6;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--silver);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      background: rgba(0, 0, 0, 0.42);
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    }
+
+    .page {
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+
+    .page.ready {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    @keyframes scan {
+      to {
+        transform: translateX(120%);
+      }
+    }
+
+    @keyframes kickOut {
+      to {
+        opacity: 0;
+        filter: blur(2px);
+        transform: scale(1.45) translateY(-20px) rotate(var(--exit-tilt, 9deg));
+      }
+    }
+
+    @media (min-width: 720px) {
+      .page {
+        padding-block: 28px;
+      }
+
+      .phone {
+        width: min(100%, 880px);
+        min-height: 640px;
+        grid-template-columns: 0.9fr 1.1fr;
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .topbar,
+      .odds {
+        grid-column: 1 / -1;
+      }
+
+      .hero,
+      .stage {
+        align-self: center;
+      }
+
+      .stage {
+        padding-top: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="intro" id="intro" aria-label="生日开场卡片">
+    <!-- <button  class="intro-skip" id="skipIntro" type="button">跳过</button> -->
+    <div class="intro-panel">
+      <article class="intro-card current accent" style="--tilt: -2deg; --exit-tilt: 10deg">
+        <div><b>祝</b></div>
+      </article>
+      <article class="intro-card next" style="--tilt: 1deg; --exit-tilt: -8deg">
+        <div><b>理智常满的<br />刀客塔</b></div>
+      </article>
+      <article class="intro-card" style="--tilt: -1deg; --exit-tilt: 7deg">
+        <div><b>圣杯眷顾的<br />Master</b></div>
+      </article>
+      <article class="intro-card" style="--tilt: 2deg; --exit-tilt: -10deg">
+        <div><b>电量满满的的<br />管理员</b></div>
+      </article>
+      <article class="intro-card" style="--tilt: -2deg; --exit-tilt: 8deg">
+        <div><b>前线统筹的<br />指挥官</b></div>
+      </article>
+      <article class="intro-card accent" style="--tilt: 1deg; --exit-tilt: -7deg">
+        <div><b>廖在建<br />小朋友</b></div>
+      </article>
+      <article class="intro-card final" style="--tilt: 0deg; --exit-tilt: 0deg">
+        <div><b>生日快乐！</b></div>
+      </article>
+      <button class="intro-hit" id="introHit" type="button" aria-label="切换下一张卡片"></button>
+    </div>
+  </div>
+
+  <main class="page" id="page">
+    <section class="phone" aria-labelledby="title">
+      <header class="topbar">
+        <div class="brand">
+          <div>
+            <b>BIRTHDAY PROTOCOL</b>
+            <span>LOTTERY TERMINAL</span>
+          </div>
+        </div>
+        <button class="menu" type="button" aria-label="菜单">
+          <i></i><i></i><i></i>
+        </button>
+      </header>
+
+      <section class="hero">
+        <div class="code">SYS.BD-0730</div>
+        <div class="title">
+          <small>[ LIAO ZAIJIAN ]</small>
+          <h1 id="title" data-text="生日快乐">生日快乐</h1>
+        </div>
+        <ul class="roles" aria-label="游戏身份">
+          <li>理智常满的刀客塔</li>
+          <li>圣杯眷顾的Master</li>
+          <li>电量满满的的管理员</li>
+          <li>前线统筹的指挥官</li>
+        </ul>
+      </section>
+
+      <section class="stage" aria-label="抽奖区域">
+        <article class="card" id="card">
+          <div class="empty" id="empty">
+            <div>
+              <b>请输入文本</b>
+              <span>请输入文本</span>
+            </div>
+          </div>
+          <div class="result" id="result" aria-live="polite">
+            <img id="prizeImage" alt="" />
+            <div class="caption">
+              <h2 id="prizeName"></h2>
+              <span>RATE 50%</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="cta">
+          <button class="draw" id="drawButton" type="button">开始抽取</button>
+          <p class="status" id="status"></p>
+        </div>
+      </section>
+
+      <section class="odds" aria-label="奖品概率">
+        <div>
+          <small>PRIZE A</small>
+          <b>大颗板栗1</b>
+          <em>50%</em>
+        </div>
+        <div>
+          <small>PRIZE B</small>
+          <b>哈基米萝莉踩踩背</b>
+          <em>50%</em>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const prizes = [{
+        name: "大颗板栗1",
+        src: "大颗板栗1.png",
+        alt: "奖品图片：大颗板栗1"
+      },
+      {
+        name: "哈基米萝莉踩踩背",
+        src: "哈基米萝莉踩踩背.png",
+        alt: "奖品图片：哈基米萝莉踩踩背"
+      }
+    ];
+
+    const body = document.body;
+    const page = document.querySelector("#page");
+    const intro = document.querySelector("#intro");
+    const introHit = document.querySelector("#introHit");
+    const skipIntro = document.querySelector("#skipIntro");
+    const introCards = Array.from(document.querySelectorAll(".intro-card"));
+    const card = document.querySelector("#card");
+    const image = document.querySelector("#prizeImage");
+    const nameNode = document.querySelector("#prizeName");
+    const drawButton = document.querySelector("#drawButton");
+    const statusNode = document.querySelector("#status");
+    let introIndex = 0;
+    let isIntroMoving = false;
+
+    function enterMain() {
+      intro.classList.add("done");
+      page.classList.add("ready");
+    }
+
+    function syncIntroCards() {
+      introCards.forEach((item, index) => {
+        item.classList.remove("current", "next", "before", "kick");
+        if (index === introIndex) item.classList.add("current");
+        if (index === introIndex + 1) item.classList.add("next");
+        if (index < introIndex) item.classList.add("before");
+      });
+    }
+
+    function nextIntroCard() {
+      if (isIntroMoving) return;
+      if (introIndex >= introCards.length - 1) {
+        enterMain();
+        return;
+      }
+
+      isIntroMoving = true;
+      introCards[introIndex].classList.add("kick");
+      window.setTimeout(() => {
+        introIndex += 1;
+        syncIntroCards();
+        isIntroMoving = false;
+      }, 360);
+    }
+
+    function pickPrizeIndex() {
+      const byte = new Uint8Array(1);
+      crypto.getRandomValues(byte);
+      return byte[0] < 128 ? 0 : 1;
+    }
+
+    function render(prize) {
+      image.src = prize.src;
+      image.alt = prize.alt;
+      nameNode.textContent = prize.name;
+      card.classList.add("has-result");
+      statusNode.textContent = `已抽中：${prize.name}`;
+    }
+
+    async function draw() {
+      drawButton.disabled = true;
+      body.classList.add("drawing");
+      statusNode.textContent = "抽取中...";
+
+      await new Promise((resolve) => setTimeout(resolve, 780));
+      render(prizes[pickPrizeIndex()]);
+
+      body.classList.remove("drawing");
+      drawButton.textContent = "再次抽取";
+      drawButton.disabled = false;
+    }
+
+    syncIntroCards();
+    introHit.addEventListener("click", nextIntroCard);
+    skipIntro.addEventListener("click", enterMain);
+    drawButton.addEventListener("click", draw);
+  </script>
+</body>
+
+</html>
