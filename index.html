@@ -487,9 +487,9 @@
       opacity: 0;
       transform: scale(0.62) translateY(24px) rotate(var(--tilt, 0deg));
       transition:
-        opacity 520ms ease,
+        opacity 100ms ease,
         transform 680ms cubic-bezier(0.16, 0.98, 0.22, 1),
-        filter 520ms ease;
+        filter 100ms ease;
       will-change: transform, opacity, filter;
       pointer-events: none;
     }
@@ -618,7 +618,7 @@
     .page {
       opacity: 0;
       transform: scale(0.98);
-      transition: opacity 520ms ease, transform 520ms ease;
+      transition: opacity 100ms ease, transform 100ms ease;
     }
 
     .page.ready {
@@ -829,7 +829,7 @@
         introIndex += 1;
         syncIntroCards();
         isIntroMoving = false;
-      }, 520);
+      }, 100);
     }
 
     function pickPrizeIndex() {
@@ -861,7 +861,7 @@
 
     syncIntroCards();
     introHit.addEventListener("click", nextIntroCard);
-    skipIntro?.addEventListener("click", enterMain);
+    skipIntro ? .addEventListener("click", enterMain);
     drawButton.addEventListener("click", draw);
   </script>
 </body>
